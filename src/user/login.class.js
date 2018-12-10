@@ -23,8 +23,8 @@ class Login {
                 const login = $('[name=loginField]');
                 const password = $('[name=passwordField]');
 
-                //Est ce que les deux champs sont remplis
-                if (login.val() !== '' && password.val() !== '') {
+                //Est ce que les deux champs sont remplis et le login a plus ou 5 caractères
+                if (login.val().length >= 5 && password.val() !== '') {
                     $('#btnLogin').removeAttr('disabled');
                 } else {
                     // Non, ça ne le fait pas tout seul, il faut le lui dire
