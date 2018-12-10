@@ -1,0 +1,17 @@
+{
+  "name": "intro",
+  "version": "1.0.0",
+  "description": "Introduction au langage Javascript",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "javascript",
+    "es6",
+    "css",
+    "html"
+  ],
+  "author": "Aelion",
+  "license": "ISC"
+}

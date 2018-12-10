@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf8">
+    <meta name="viewport" content="width=devise-width, initial-scale=1.0, maximum-scale=1.0">
+
+    <title>Hello Javascript</title>
+
+</head>
+
+<body>
+    <!-- Titre alimenté en javascript
+        ATTENTION ! Ne jamais faire ça sur un site web-->
+    <h1 id="main-title"></h1>
+
+    <!-- Premier script Javascript (avec selecteur getelementbyID, et ici notre id dans body est 'main title')
+    On doit impérativement faire appel à notre variable après lui avoir donné une valeur -->
+    <script>
+        let title = document.getElementById('main-title');
+        title.innerHTML = 'Hello Javascript';
+    </script>
+</body>
+
+</html>
