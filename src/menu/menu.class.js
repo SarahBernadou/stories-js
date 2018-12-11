@@ -11,6 +11,7 @@ class Menu {
     constructor(user) {
 
 
+
         let userName = user.getUserName();
 
         $('[id="navbarDropdown"]').html(userName);
@@ -18,6 +19,8 @@ class Menu {
         $('[id="mdp"]').html('Modifier mot de passe');
         $('[id="deco"]').html('Deconnexion');
 
+        $('[id="navbarDropdown"]').removeClass("disabled");
 
     }
 }
+
