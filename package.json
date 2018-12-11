@@ -4,9 +4,11 @@
   "description": "Introduction au langage Javascript",
   "main": "index.js",
   "scripts": {
+    "babel": "babel --presets es2015 assets/javascript/main.js -o build/main.bundle.js",
     "start": "http-server",
+    "webpack": "webpack --watch --mode=development",
     "test": "echo \"Error: no test specified\" && exit 1"
-    },
+  },
   "keywords": [
     "javascript",
     "es6",
@@ -21,6 +23,12 @@
     "popper.js": "^1.14.6"
   },
   "devDependencies": {
-    "http-server": "^0.11.1"
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^8.0.4",
+    "babel-preset-es2015": "^6.24.1",
+    "http-server": "^0.11.1",
+    "webpack": "^4.27.1",
+    "webpack-cli": "^3.1.2"
   }
 }
