@@ -54,6 +54,7 @@ class Login {
                 // Gere l'authentification
                 if (user.authentification()) {
                     console.log('Ok, ça roule');
+                    const menu = new Menu(user);
                 } else {
                     console.log('Nop, t\'as pas l\'droit !');
                     login.val('');

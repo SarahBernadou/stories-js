@@ -32,4 +32,9 @@ class User {
         }
         return false;
     }
+    getUserName(){
+        let userName = this.userName;
+        return userName;
+    }
 }
+
