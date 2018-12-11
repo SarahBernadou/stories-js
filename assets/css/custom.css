@@ -11,7 +11,11 @@
 }
 
 .toast.danger {
-    background-color: rgba(201, 23, 23, 0.883);
+    /**background-color: rgba(201, 23, 23, 0.883); A REACTIVER SI J'ENLEVE MA CLASSSE DANGER P */ 
     color: #fff;
     border: solid 1px #fff;
+}
+/** Ca c'est si je veux surligner le texte seulement, mais je dois modifier ma class toast .html('<p>' + this.message + '</p>')*/
+.toast.danger p {
+    background-color: rgba(189, 19, 19, 0.883)
 }

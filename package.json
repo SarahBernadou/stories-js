@@ -4,8 +4,9 @@
   "description": "Introduction au langage Javascript",
   "main": "index.js",
   "scripts": {
+    "start": "http-server",
     "test": "echo \"Error: no test specified\" && exit 1"
-  },
+    },
   "keywords": [
     "javascript",
     "es6",
@@ -18,5 +19,8 @@
     "bootstrap": "^4.1.3",
     "jquery": "^3.3.1",
     "popper.js": "^1.14.6"
+  },
+  "devDependencies": {
+    "http-server": "^0.11.1"
   }
 }

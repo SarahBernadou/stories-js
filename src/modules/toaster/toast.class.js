@@ -44,7 +44,7 @@ class Toast {
         toaster
             .addClass(this.backgroundClass)
             .addClass('toast')
-            .html(this.message);
+            .html('<p>' + this.message + '</p>'); //Si je veux un bloc entier d ela taille de mon toaast css, je mets this.message (voir aussi sur custom.css)
 
         // Ajoute le toaster au document lui-même
         toaster.appendTo($('body'));

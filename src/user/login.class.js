@@ -59,9 +59,9 @@ class Login {
                     login.val('');
                     password.val('');
 
-                    $('btnLogin').attr('disabled', 'disabled');
+                    $('#btnLogin').attr('disabled', 'disabled');
 
-                    // On peut instancier un toast
+                    // On peut instancier un toast, c'est un objet JSON
                     const toast = new Toast(
                         {
                             'message': 'Login et/ou mot de passe éronné(s) pour cet utilisateur',
