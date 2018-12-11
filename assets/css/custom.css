@@ -1,0 +1,17 @@
+/**
+*Classe toast : definition d'un toast
+* Une classe css commence toujours par un point
+*/
+.toast{
+    position: absolute;
+    width: 200px;
+    height: 100px;
+    top: 20px;
+    left: 50%;
+}
+
+.toast.danger {
+    background-color: rgba(201, 23, 23, 0.883);
+    color: #fff;
+    border: solid 1px #fff;
+}

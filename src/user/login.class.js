@@ -60,6 +60,15 @@ class Login {
                     password.val('');
 
                     $('btnLogin').attr('disabled', 'disabled');
+
+                    // On peut instancier un toast
+                    const toast = new Toast(
+                        {
+                            'message': 'Login et/ou mot de passe éronné(s) pour cet utilisateur',
+                            'duration': 2
+                        }
+                    );
+                    toast.toastIt();
                 }
             }
         );
