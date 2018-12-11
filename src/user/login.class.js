@@ -1,4 +1,9 @@
-class Login {
+import {User} from './user.class';
+import {Menu} from './../menu/menu.class';
+import {Toast} from './../modules/toaster/toast.class';
+
+
+export class Login {
     constructor() {
         // Modifier le titre du document HTML (onglet)
         $(document).attr('title', 'Identification'); //Le texte du titre de la page HTML sera changé par Identifiez vous

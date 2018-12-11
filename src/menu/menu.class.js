@@ -6,8 +6,7 @@
  */
 
 
-
-class Menu {
+export class Menu {
     constructor(user) {
 
 
