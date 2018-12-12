@@ -68,7 +68,13 @@ export class Login {
                 // Gere l'authentification
                 if (user.authentification()) {
                     console.log('Ok, ça roule');
+
+                    //Instancie le menu
                     const menu = new Menu(user);
+                    
+                    //On va essayer d'aller vers une autre page
+                    document.location.replace('#/mystories');
+
                 } else {
                     console.log('Nop, t\'as pas l\'droit !');
                     login.val('');

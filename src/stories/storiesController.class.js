@@ -13,7 +13,7 @@ export class StoriesController {
 
     // Methode pour récupérer la vue à afficher
     getView() {
-        const app = $('[app2]') // Je decide d'injecter mon contenu dans div app dans mon fichier index (app est un nom qu'on a choisi)
+        const app = $('[app]') // Je decide d'injecter mon contenu dans div app dans mon fichier index (app est un nom qu'on a choisi)
 
         $.get( //Ce qu'on veut récuperer de l'url et en cas de succes, ou je récupère(affiche) ce que j'ai récupéré ?
             this.view,

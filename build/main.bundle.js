@@ -96,29 +96,70 @@
 "use strict";
 
 
-var _login = __webpack_require__(/*! ./../../src/user/login.class */ "./src/user/login.class.js");
+var _login3 = __webpack_require__(/*! ./../../src/user/login.class */ "./src/user/login.class.js");
 
 var _loginController = __webpack_require__(/*! ../../src/user/login/loginController.class */ "./src/user/login/loginController.class.js");
 
 var _storiesController = __webpack_require__(/*! ../../src/stories/storiesController.class */ "./src/stories/storiesController.class.js");
 
-var title = document.getElementById('main-title'); /**
-                                                    * @name main.js
-                                                    * @description Point d'entrée principal dans l'application Javascript
-                                                    */
+var _userService = __webpack_require__(/*! ../../src/services/user-service.class */ "./src/services/user-service.class.js");
 
-title.innerHTML = 'Hello Javascript';
+/**
+ * @name main.js
+ * @description Point d'entrée principal dans l'application Javascript
+ */
+$(window).on('hashchange', function (event) {
+    var url = document.location.hash;
+    console.log('Nouvelle URL : ' + url);
+    if (url === '#/mystories') {
+        // On va instancier le controleur associé
+        var authGuard = new _userService.UserService();
+        if (!authGuard.hasUser()) {
+            var controller = new _loginController.LoginController();
+            controller.getView();
 
-//Controleur des stories
-var controllerStories = new _storiesController.StoriesController();
-controllerStories.getView();
+            //Creer une instance de Login
+            var login = new _login3.Login();
+        } else {
+            //Si il y a deja un utilisateur, j'appelle le controleur des stories
+            var _controller = new _storiesController.StoriesController();
+            _controller.getView();
+        }
+    } else {
+        var _controller2 = new _loginController.LoginController();
+        _controller2.getView();
 
-//@version 1.0.1 Passage par controleur
-var controller = new _loginController.LoginController();
-controller.getView();
+        //Creer une instance de Login
+        var _login = new _login3.Login();
+    }
+});
 
-//Creer une instance de Login
-var login = new _login.Login();
+$(window).on('load', // Charge la page si le # ne change pas (le cas au lancement de l'application)
+function (event) {
+    var url = document.location.hash;
+    console.log('Nouvelle URL : ' + url);
+    if (url === '#/mystories') {
+        // On va instancier le controleur associé
+        var authGuard = new _userService.UserService();
+        if (!authGuard.hasUser()) {
+            var controller = new _loginController.LoginController();
+            controller.getView();
+
+            //Creer une instance de Login
+            var login = new _login3.Login();
+        } else {
+            //Si il y a deja un utilisateur, j'appelle le controleur des stories
+            var _controller3 = new _storiesController.StoriesController();
+            _controller3.getView();
+        }
+    } else {
+        var _controller4 = new _loginController.LoginController();
+        _controller4.getView();
+
+        //Creer une instance de Login
+        var _login2 = new _login3.Login();
+    }
+});
 
 /***/ }),
 
@@ -253,6 +294,56 @@ var Toast = exports.Toast = function () {
 
 /***/ }),
 
+/***/ "./src/services/user-service.class.js":
+/*!********************************************!*\
+  !*** ./src/services/user-service.class.js ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * @name UserService
+ * @description Service de gestion de la persistance de l'utilisateur
+ * @author Aelion
+ * @version 1.0.0
+ */
+
+var UserService = exports.UserService = function () {
+    function UserService() {
+        _classCallCheck(this, UserService);
+    }
+
+    // Lit localStorage pour récupérer un éventuel utilisateur
+
+
+    _createClass(UserService, [{
+        key: 'hasUser',
+        value: function hasUser() {
+            var user = JSON.parse(localStorage.getItem('storiesUser')); // methode parse : je prends une chaine, je la convertie en objet JSON
+
+            if (user) {
+                return true;
+            }
+            return false;
+        }
+    }]);
+
+    return UserService;
+}();
+
+/***/ }),
+
 /***/ "./src/stories/storiesController.class.js":
 /*!************************************************!*\
   !*** ./src/stories/storiesController.class.js ***!
@@ -292,7 +383,7 @@ var StoriesController = exports.StoriesController = function () {
     _createClass(StoriesController, [{
         key: 'getView',
         value: function getView() {
-            var app = $('[app2]'); // Je decide d'injecter mon contenu dans div app dans mon fichier index (app est un nom qu'on a choisi)
+            var app = $('[app]'); // Je decide d'injecter mon contenu dans div app dans mon fichier index (app est un nom qu'on a choisi)
 
             $.get( //Ce qu'on veut récuperer de l'url et en cas de succes, ou je récupère(affiche) ce que j'ai récupéré ?
             this.view, function (viewContent) {
@@ -400,7 +491,12 @@ var Login = exports.Login = function () {
                 // Gere l'authentification
                 if (user.authentification()) {
                     console.log('Ok, ça roule');
+
+                    //Instancie le menu
                     var menu = new _menu.Menu(user);
+
+                    //On va essayer d'aller vers une autre page
+                    document.location.replace('#/mystories');
                 } else {
                     console.log('Nop, t\'as pas l\'droit !');
                     login.val('');
@@ -538,6 +634,14 @@ var User = exports.User = function () {
         value: function authentification() {
             if (this.userName === 'sbernadou' && this.password === 'sbe') {
                 this.group = 'Administrateur';
+
+                //Ajout de l'utilisateur dans localStorage
+                var persistantUser = {
+                    userName: this.userName,
+                    group: this.group
+                };
+                localStorage.setItem('storiesUser', JSON.stringify(persistantUser)); //stringify permet d'enregistrer en chaine de caractère un objet json
+
                 return true;
             }
             return false;
