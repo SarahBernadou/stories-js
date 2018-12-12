@@ -98,12 +98,24 @@
 
 var _login = __webpack_require__(/*! ./../../src/user/login.class */ "./src/user/login.class.js");
 
+var _loginController = __webpack_require__(/*! ../../src/user/login/loginController.class */ "./src/user/login/loginController.class.js");
+
+var _storiesController = __webpack_require__(/*! ../../src/stories/storiesController.class */ "./src/stories/storiesController.class.js");
+
 var title = document.getElementById('main-title'); /**
                                                     * @name main.js
                                                     * @description Point d'entrée principal dans l'application Javascript
                                                     */
 
 title.innerHTML = 'Hello Javascript';
+
+//Controleur des stories
+var controllerStories = new _storiesController.StoriesController();
+controllerStories.getView();
+
+//@version 1.0.1 Passage par controleur
+var controller = new _loginController.LoginController();
+controller.getView();
 
 //Creer une instance de Login
 var login = new _login.Login();
@@ -136,14 +148,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var Menu = exports.Menu = function Menu(user) {
         _classCallCheck(this, Menu);
 
-        var userName = user.getUserName();
+        // Autre façon plus longue d'afficher mon nom dans l'utilisateur après connexion
+        // let userName = user.getUserName();
+        // $('[id="navbarDropdown"]').html(userName);
 
-        $('[id="navbarDropdown"]').html(userName);
+        $('[id="navbarDropdown"]').html(user.getUserName());
         $('[id="pref"]').html('Mes préférences');
         $('[id="mdp"]').html('Modifier mot de passe');
         $('[id="deco"]').html('Deconnexion');
 
-        $('[id="navbarDropdown"]').removeClass("disabled");
+        $('[id="navbarDropdown"]').removeClass("disabled").addClass("active");
 };
 
 /***/ }),
@@ -220,18 +234,75 @@ var Toast = exports.Toast = function () {
             // Ajoute le toaster au document lui-même
             toaster.appendTo($('body'));
 
-            //Affiche pendant un certain temps
+            //Affiche pendant un certain temps 
+
             setTimeout(function () {
+                // Ici je fais joliment disparaitre mon toaster
+                toaster.removeClass('zoomIn').addClass('zoomOut');
+
                 setTimeout(function () {
-                    // Ici je fais joliment disparaitre mon toaster
-                    toaster.removeClass('zoomIn').addClass('zoomOut');
-                }, this.duration / 2 * 1000); //Ici, quand on arrive au bout de l'intervalle de temps
-                //toaster.remove();
+                    //Ici, quand on arrive au bout de l'intervalle de temps
+                    toaster.remove();
+                }, 1000);
             }, this.duration * 1000);
         }
     }]);
 
     return Toast;
+}();
+
+/***/ }),
+
+/***/ "./src/stories/storiesController.class.js":
+/*!************************************************!*\
+  !*** ./src/stories/storiesController.class.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * @name SotriesController
+ * @description Controleur des stories
+ * @author Aelion
+ * @version 1.0.0
+ */
+
+var StoriesController = exports.StoriesController = function () {
+    function StoriesController() {
+        _classCallCheck(this, StoriesController);
+
+        // Definit la vue pour ce controleur
+        this.view = './src/stories/stories.view.html';
+    }
+
+    // Methode pour récupérer la vue à afficher
+
+
+    _createClass(StoriesController, [{
+        key: 'getView',
+        value: function getView() {
+            var app = $('[app2]'); // Je decide d'injecter mon contenu dans div app dans mon fichier index (app est un nom qu'on a choisi)
+
+            $.get( //Ce qu'on veut récuperer de l'url et en cas de succes, ou je récupère(affiche) ce que j'ai récupéré ?
+            this.view, function (viewContent) {
+                app.empty(); //Vide le contenu le cas echeant
+                app.html(viewContent); //Je le rempi avec ma vue
+            });
+        }
+    }]);
+
+    return StoriesController;
 }();
 
 /***/ }),
@@ -271,10 +342,6 @@ var Login = exports.Login = function () {
         // Modifier le titre de la page
         $('#main-title').html('Identifiez-vous'); //html fait reference a h1 dans index
 
-        // Je defini mes attributs
-        this.login = $('[name="loginField"]');
-        this.password = $('[name="passwordField"]');
-
         //Definition du listener sur le formulaire
         this.formListener(); //this correspond a l'objet concerné de la classe Login
         this.submitListener();
@@ -290,13 +357,18 @@ var Login = exports.Login = function () {
     _createClass(Login, [{
         key: 'formListener',
         value: function formListener() {
-            var login = this.login;
-            var password = this.password;
+            //let login = this.login;
+            // let password = this.password;
 
-            $('#loginForm').on( //Je veux écouter tous les changements au lever d'une touche ('keyup') sur le formulaire Login
-            'keyup',
-            //Callback : Fonction appelée si l'évènement defini survient, ici, lors d'un changement, et le this n'est pas accepté dans un callback
+            var app = $('[app]');
+
+            app.on( //Je veux écouter tous les changements au lever d'une touche ('keyup') sur le formulaire Login
+            'keyup', '#loginForm', // Délégation d'évènement
+            //Callback : Fonction appelée si l'évènement defini survient, ici, lors d'une remontée de touche
             function (event) {
+                // Je defini mes attributs
+                var login = $('[name="loginField"]');
+                var password = $('[name="passwordField"]');
 
                 //Est ce que les deux champs sont remplis et le login a plus ou 5 caractères
                 if (login.val().length >= 5 && password.val() !== '') {
@@ -310,10 +382,16 @@ var Login = exports.Login = function () {
     }, {
         key: 'submitListener',
         value: function submitListener() {
-            var login = this.login;
-            var password = this.password;
+            // let login = this.login;
+            // let password = this.password;
 
-            $('#loginForm').on('submit', function (event) {
+            var app = $('[app]');
+
+            app.on('submit', '#loginForm', function (event) {
+                // Je defini mes attributs
+                var login = $('[name="loginField"]');
+                var password = $('[name="passwordField"]');
+
                 event.preventDefault(); //Empeche l'action par defaut (ici l'envoie du formulaire)
                 var user = new _user.User();
                 user.setUserName(login.val());
@@ -342,6 +420,60 @@ var Login = exports.Login = function () {
     }]);
 
     return Login;
+}();
+
+/***/ }),
+
+/***/ "./src/user/login/loginController.class.js":
+/*!*************************************************!*\
+  !*** ./src/user/login/loginController.class.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * @name LoginController
+ * @description Controleur pour la gestion du formulaire de login
+ * @author Aelion
+ * @version 1.0.0
+ */
+
+var LoginController = exports.LoginController = function () {
+    function LoginController() {
+        _classCallCheck(this, LoginController);
+
+        // Definit la vue pour ce controleur
+        this.view = './src/user/login/views/loginform.view.html';
+    }
+
+    // Methode pour récupérer la vue à afficher
+
+
+    _createClass(LoginController, [{
+        key: 'getView',
+        value: function getView() {
+            var app = $('[app]'); // Je decide d'injecter mon contenu dans div app dans mon fichier index (app est un nom qu'on a choisi)
+
+            $.get( //Ce qu'on veut récuperer de l'url et en cas de succes, ou je récupère(affiche) ce que j'ai récupéré ?
+            this.view, function (viewContent) {
+                app.empty(); //Vide le contenu le cas echeant
+                app.html(viewContent); //Je le rempi avec ma vue
+            });
+        }
+    }]);
+
+    return LoginController;
 }();
 
 /***/ }),

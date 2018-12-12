@@ -1,6 +1,6 @@
-import {User} from './user.class';
-import {Menu} from './../menu/menu.class';
-import {Toast} from './../modules/toaster/toast.class';
+import { User } from './user.class';
+import { Menu } from './../menu/menu.class';
+import { Toast } from './../modules/toaster/toast.class';
 
 
 export class Login {
@@ -10,10 +10,6 @@ export class Login {
 
         // Modifier le titre de la page
         $('#main-title').html('Identifiez-vous') //html fait reference a h1 dans index
-
-        // Je defini mes attributs
-        this.login = $('[name="loginField"]');
-        this.password = $('[name="passwordField"]');
 
         //Definition du listener sur le formulaire
         this.formListener(); //this correspond a l'objet concerné de la classe Login
@@ -26,14 +22,20 @@ export class Login {
      * @return void
      */
     formListener() {
-        let login = this.login;
-        let password = this.password;
+        //let login = this.login;
+       // let password = this.password;
 
-        $('#loginForm').on( //Je veux écouter tous les changements au lever d'une touche ('keyup') sur le formulaire Login
+        const app = $('[app]');
+
+        app.on( //Je veux écouter tous les changements au lever d'une touche ('keyup') sur le formulaire Login
             'keyup',
-            //Callback : Fonction appelée si l'évènement defini survient, ici, lors d'un changement, et le this n'est pas accepté dans un callback
+            '#loginForm', // Délégation d'évènement
+            //Callback : Fonction appelée si l'évènement defini survient, ici, lors d'une remontée de touche
             function (event) {
-                
+                // Je defini mes attributs
+                let login = $('[name="loginField"]');
+                let password = $('[name="passwordField"]');
+
                 //Est ce que les deux champs sont remplis et le login a plus ou 5 caractères
                 if (login.val().length >= 5 && password.val() !== '') {
                     $('#btnLogin').removeAttr('disabled');
@@ -45,12 +47,19 @@ export class Login {
         );
     }
     submitListener() {
-        let login = this.login;
-        let password = this.password;
+       // let login = this.login;
+       // let password = this.password;
 
-        $('#loginForm').on(
+        const app = $('[app]');
+
+        app.on(
             'submit',
+            '#loginForm',
             function (event) {
+                // Je defini mes attributs
+                let login = $('[name="loginField"]');
+                let password = $('[name="passwordField"]');
+
                 event.preventDefault(); //Empeche l'action par defaut (ici l'envoie du formulaire)
                 const user = new User();
                 user.setUserName(login.val());

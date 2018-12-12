@@ -51,21 +51,24 @@ export class Toast {
         // Ajoute le toaster au document lui-même
         toaster.appendTo($('body'));
 
-        //Affiche pendant un certain temps
+        //Affiche pendant un certain temps 
+
         setTimeout(
             function () {
+                // Ici je fais joliment disparaitre mon toaster
+                toaster.removeClass('zoomIn').addClass('zoomOut');
+
                 setTimeout(
                     function () {
-                        // Ici je fais joliment disparaitre mon toaster
-                        toaster.removeClass('zoomIn').addClass('zoomOut');
+                        //Ici, quand on arrive au bout de l'intervalle de temps
+                        toaster.remove();
                     },
-                    (this.duration / 2) * 1000
-                    
-                ); //Ici, quand on arrive au bout de l'intervalle de temps
-               //toaster.remove();
+                    1000
+                );
             },
             this.duration * 1000
         );
+
 
     }
 }
