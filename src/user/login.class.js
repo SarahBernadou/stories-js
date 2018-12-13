@@ -23,7 +23,7 @@ export class Login {
      */
     formListener() {
         //let login = this.login;
-       // let password = this.password;
+        // let password = this.password;
 
         const app = $('[app]');
 
@@ -47,8 +47,8 @@ export class Login {
         );
     }
     submitListener() {
-       // let login = this.login;
-       // let password = this.password;
+        // let login = this.login;
+        // let password = this.password;
 
         const app = $('[app]');
 
@@ -65,32 +65,34 @@ export class Login {
                 user.setUserName(login.val());
                 user.setPassword(password.val());
 
-                // Gere l'authentification
-                if (user.authentification()) {
-                    console.log('Ok, ça roule');
+                user.authentification().then((aUser) => { // Je demande a la methode authentification de me retourner sa promesse une fois résolue
+                    // Gere l'authentification
+                    if (aUser) {
+                        console.log('Ok, ça roule');
 
-                    //Instancie le menu
-                    const menu = new Menu(user);
-                    
-                    //On va essayer d'aller vers une autre page
-                    document.location.replace('#/mystories');
+                        //Instancie le menu
+                        const menu = new Menu(user);
 
-                } else {
-                    console.log('Nop, t\'as pas l\'droit !');
-                    login.val('');
-                    password.val('');
+                        //On va essayer d'aller vers une autre page
+                        document.location.replace('#/mystories');
 
-                    $('#btnLogin').attr('disabled', 'disabled');
+                    } else {
+                        console.log('Nop, t\'as pas l\'droit !');
+                        login.val('');
+                        password.val('');
 
-                    // On peut instancier un toast, c'est un objet JSON
-                    const toast = new Toast(
-                        {
-                            'message': 'Login et/ou mot de passe éronné(s) pour cet utilisateur',
-                            'duration': 2
-                        }
-                    );
-                    toast.toastIt();
-                }
+                        $('#btnLogin').attr('disabled', 'disabled');
+
+                        // On peut instancier un toast, c'est un objet JSON
+                        const toast = new Toast(
+                            {
+                                'message': 'Login et/ou mot de passe éronné(s) pour cet utilisateur',
+                                'duration': 2
+                            }
+                        );
+                        toast.toastIt();
+                    }
+                });
             }
         );
     }

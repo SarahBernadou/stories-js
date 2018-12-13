@@ -695,29 +695,32 @@ var Login = exports.Login = function () {
                 user.setUserName(login.val());
                 user.setPassword(password.val());
 
-                // Gere l'authentification
-                if (user.authentification()) {
-                    console.log('Ok, ça roule');
+                user.authentification().then(function (aUser) {
+                    // Je demande a la methode authentification de me retourner sa promesse une fois résolue
+                    // Gere l'authentification
+                    if (aUser) {
+                        console.log('Ok, ça roule');
 
-                    //Instancie le menu
-                    var menu = new _menu.Menu(user);
+                        //Instancie le menu
+                        var menu = new _menu.Menu(user);
 
-                    //On va essayer d'aller vers une autre page
-                    document.location.replace('#/mystories');
-                } else {
-                    console.log('Nop, t\'as pas l\'droit !');
-                    login.val('');
-                    password.val('');
+                        //On va essayer d'aller vers une autre page
+                        document.location.replace('#/mystories');
+                    } else {
+                        console.log('Nop, t\'as pas l\'droit !');
+                        login.val('');
+                        password.val('');
 
-                    $('#btnLogin').attr('disabled', 'disabled');
+                        $('#btnLogin').attr('disabled', 'disabled');
 
-                    // On peut instancier un toast, c'est un objet JSON
-                    var toast = new _toast.Toast({
-                        'message': 'Login et/ou mot de passe éronné(s) pour cet utilisateur',
-                        'duration': 2
-                    });
-                    toast.toastIt();
-                }
+                        // On peut instancier un toast, c'est un objet JSON
+                        var toast = new _toast.Toast({
+                            'message': 'Login et/ou mot de passe éronné(s) pour cet utilisateur',
+                            'duration': 2
+                        });
+                        toast.toastIt();
+                    }
+                });
             });
         }
     }]);
@@ -904,19 +907,48 @@ var User = exports.User = function () {
     }, {
         key: 'authentification',
         value: function authentification() {
-            if (this.userName === 'sbernadou' && this.password === 'sbe') {
-                this.group = 'Administrateur';
+            var _this = this;
 
-                //Ajout de l'utilisateur dans localStorage
-                var persistantUser = {
-                    userName: this.userName,
-                    group: this.group
-                };
-                localStorage.setItem('storiesUser', JSON.stringify(persistantUser)); //stringify permet d'enregistrer en chaine de caractère un objet json
+            // Appel vers le serveur :
+            //GET http://localhost/3000/users/:login/:password
 
-                return true;
-            }
-            return false;
+            var user = this;
+
+            return new Promise(function (resolve) {
+
+                $.ajax({ //methode Jquery pour appel asynchrone a un serveur,  
+                    url: 'http://localhost:3000/users/' + _this.userName + '/' + _this.password,
+                    method: 'get',
+                    responseType: 'json',
+                    success: function success(datas) {
+                        // retourne response de notre user nodetodo-users
+                        var srvUser = datas[0];
+                        if (srvUser) {
+                            user.userName = srvUser.nom;
+                            user.forname = srvUser.prenom;
+                            user.group = srvUser.metier;
+
+                            var persistentUser = {
+                                Username: user.userName,
+                                group: user.group
+                            };
+
+                            // On ajoute l'utilisateur au localStorage
+                            localStorage.setItem('storiesUser', JSON.stringify(persistentUser));
+
+                            // C'est bon, j'ai bien un utilisateur
+                            resolve(true);
+                        } else {
+                            resolve(false);
+                        }
+                    },
+                    error: function error(xhr, _error) {
+                        //J'ai personne
+                        resolve(false);
+                    }
+
+                });
+            });
         }
     }, {
         key: 'getUserName',
