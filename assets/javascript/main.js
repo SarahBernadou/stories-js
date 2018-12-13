@@ -4,13 +4,15 @@
  */
 import { Router } from '../../src/modules/router/router.class';
 import { Route } from '../../src/modules/router/route.class';
+import { UserService } from '../../src/services/userservice.class';
 
 //Instancue les routes de l'application
 const router = new Router();
+const userService = new UserService()
 router
     .add(
-        new Route('/', 'LoginController')
+        new Route('/', 'LoginController', userService)
     )
     .add(
-        new Route('/mystories', 'StoriesController')
+        new Route('/mystories', 'StoriesController', userService)
     )
