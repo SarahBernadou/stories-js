@@ -1,5 +1,5 @@
 /**
- * @name SotriesController
+ * @name StoriesController
  * @description Controleur des stories
  * @author Aelion
  * @version 1.0.0

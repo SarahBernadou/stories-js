@@ -1,18 +1,14 @@
 /**
- * @name LoginController
- * @description Controleur pour la gestion du formulaire de login
+ * @name ErrorController
+ * @description Controleur des erreur
  * @author Aelion
  * @version 1.0.0
  */
-import {Login}  from './../login.class';
 
-export class LoginController {
+export class ErrorController {
     constructor() {
         // Definit la vue pour ce controleur
-        this.view = './src/user/login/views/loginform.view.html';
-
-        // Instancier la classe Login pour la premiere gestion du formulaire
-        this.login = new Login();
+        this.view = './src/errors/views/noRoute.view.html';
     }
 
     // Methode pour récupérer la vue à afficher
