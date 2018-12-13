@@ -9,6 +9,7 @@ export class StoriesController {
     constructor() {
         // Definit la vue pour ce controleur
         this.view = './src/stories/stories.view.html';
+        
     }
 
     // Methode pour récupérer la vue à afficher
