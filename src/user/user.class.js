@@ -28,11 +28,19 @@ export class User {
     authentification() {
         if (this.userName === 'sbernadou' && this.password === 'sbe') {
             this.group = 'Administrateur';
+
+            //Ajout de l'utilisateur dans localStorage
+            const persistantUser = {
+                userName: this.userName,
+                group: this.group
+            };
+            localStorage.setItem('storiesUser', JSON.stringify(persistantUser)); //stringify permet d'enregistrer en chaine de caractère un objet json
+
             return true;
         }
         return false;
     }
-    getUserName(){
+    getUserName() {
         let userName = this.userName;
         return userName;
     }

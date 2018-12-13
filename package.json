@@ -23,6 +23,7 @@
     "popper.js": "^1.14.6"
   },
   "devDependencies": {
+    "animate.css": "^3.7.0",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.5",

@@ -43,19 +43,32 @@ export class Toast {
         // On lui ajoute les classes
         toaster
             .addClass(this.backgroundClass)
+            .addClass('animated')
+            .addClass('zoomIn')
             .addClass('toast')
             .html('<p>' + this.message + '</p>'); //Si je veux un bloc entier d ela taille de mon toaast css, je mets this.message (voir aussi sur custom.css)
 
         // Ajoute le toaster au document lui-même
         toaster.appendTo($('body'));
 
-        //Affiche pendant un certain temps
+        //Affiche pendant un certain temps 
+
         setTimeout(
             function () {
-                //Ici, quand on arrive au bout de l'intervalle de temps
-                toaster.remove();
+                // Ici je fais joliment disparaitre mon toaster
+                toaster.removeClass('zoomIn').addClass('zoomOut');
+
+                setTimeout(
+                    function () {
+                        //Ici, quand on arrive au bout de l'intervalle de temps
+                        toaster.remove();
+                    },
+                    1000
+                );
             },
             this.duration * 1000
         );
+
+
     }
 }

@@ -9,7 +9,9 @@
 
     <!-- Feuilles de style (link est une balise orpheline, elle n'a pas de balise fermante (meta aussi)-->
     <link href="./node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="node_modules/animate.css/animate.min.css" rel="stylesheet">
     <link href="./assets/css/custom.css" rel="stylesheet">
+    <link href="assets/css/style.css" rel="stylesheet">
 
 </head>
 
@@ -32,26 +34,26 @@
             <div class="collapse navbar-collapse" id="stories-menu">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item active">
-                        <a class="nav-link" title="Accueil" href="#">Accueil <span class="sr-only">(current)</span></a>
+                        <a class="nav-link" title="Accueil" href="#/">Accueil <span class="sr-only">(current)</span></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link disabled" title="Toutes les stories" href="#">Toutes les stories</a>
+                        <a class="nav-link disabled" title="Toutes les stories" href="#/allstories">Toutes les stories</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link disabled" title="Mes Stories" href="#">Mes Stories</a>
+                        <a class="nav-link disabled" title="Mes Stories" href="#/mystories">Mes Stories</a>
                     </li>
 
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle disabled" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+                        <a class="nav-link dropdown-toggle disabled" href="#/utilisateur" id="navbarDropdown" role="button" data-toggle="dropdown"
                             aria-haspopup="true" aria-expanded="false">
                             Utilisateur
                         </a>
                         <!--Options du menu utilisateur-->
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown" id="sousmenu">
-                            <a class="dropdown-item" href="#" id="pref">Option 1</a>
-                            <a class="dropdown-item" href="#" id="mdp">Option 2</a>
+                            <a class="dropdown-item" href="#/pref" id="pref">Option 1</a>
+                            <a class="dropdown-item" href="#/mdp" id="mdp">Option 2</a>
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="#" id="deco">Option 3</a>
+                            <a class="dropdown-item" href="#/deco" id="deco">Option 3</a>
                         </div>
                     </li>
 
@@ -66,13 +68,9 @@
         <!-- Docking de la single page aplication (SPA)-->
         <div app>
             <!-- Ici, le contenu de l'application finale identifié par l'attribut "app"-->
-            <form id="loginForm" class="form-stacked">
-                <input type="text" name="loginField" autocomplete="off" class="form-control" placeholder="Votre identifiant">
-                <input type="password" name="passwordField" autocomplete="off" class="form-control" placeholder="Votre mot de passe">
-                <!--Bouton de type submit soumet un formulaire-->
-                <button type="submit" id="btnLogin" class="btn btn-success" disabled>Connexion</button>
-            </form>
+           
         </div>
+        <div app2></div>
 
 
         <footer>

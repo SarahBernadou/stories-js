@@ -96,17 +96,74 @@
 "use strict";
 
 
-var _login = __webpack_require__(/*! ./../../src/user/login.class */ "./src/user/login.class.js");
+var _router = __webpack_require__(/*! ../../src/modules/router/router.class */ "./src/modules/router/router.class.js");
 
-var title = document.getElementById('main-title'); /**
-                                                    * @name main.js
-                                                    * @description Point d'entrée principal dans l'application Javascript
-                                                    */
+var _route = __webpack_require__(/*! ../../src/modules/router/route.class */ "./src/modules/router/route.class.js");
 
-title.innerHTML = 'Hello Javascript';
+var _userservice = __webpack_require__(/*! ../../src/services/userservice.class */ "./src/services/userservice.class.js");
 
-//Creer une instance de Login
-var login = new _login.Login();
+//Instancie les routes de l'application
+var router = new _router.Router(); /**
+                                    * @name main.js
+                                    * @description Point d'entrée principal dans l'application Javascript
+                                    */
+
+var userService = new _userservice.UserService();
+router.add(new _route.Route('/', 'LoginController', userService)).add(new _route.Route('/mystories', 'StoriesController', userService)).add(new _route.Route('/deco', 'LogoutController', userService));
+
+/***/ }),
+
+/***/ "./src/errors/error.class.js":
+/*!***********************************!*\
+  !*** ./src/errors/error.class.js ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * @name ErrorController
+ * @description Controleur des erreur
+ * @author Aelion
+ * @version 1.0.0
+ */
+
+var ErrorController = exports.ErrorController = function () {
+    function ErrorController() {
+        _classCallCheck(this, ErrorController);
+
+        // Definit la vue pour ce controleur
+        this.view = './src/errors/views/noRoute.view.html';
+    }
+
+    // Methode pour récupérer la vue à afficher
+
+
+    _createClass(ErrorController, [{
+        key: 'getView',
+        value: function getView() {
+            var app = $('[app]'); // Je decide d'injecter mon contenu dans div app dans mon fichier index (app est un nom qu'on a choisi)
+
+            $.get( //Ce qu'on veut récuperer de l'url et en cas de succes, ou je récupère(affiche) ce que j'ai récupéré ?
+            this.view, function (viewContent) {
+                app.empty(); //Vide le contenu le cas echeant
+                app.html(viewContent); //Je le rempi avec ma vue
+            });
+        }
+    }]);
+
+    return ErrorController;
+}();
 
 /***/ }),
 
@@ -136,15 +193,200 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var Menu = exports.Menu = function Menu(user) {
         _classCallCheck(this, Menu);
 
-        var userName = user.getUserName();
+        // Autre façon plus longue d'afficher mon nom dans l'utilisateur après connexion
+        // let userName = user.getUserName();
+        // $('[id="navbarDropdown"]').html(userName);
 
-        $('[id="navbarDropdown"]').html(userName);
+        $('[id="navbarDropdown"]').html(user.getUserName());
         $('[id="pref"]').html('Mes préférences');
         $('[id="mdp"]').html('Modifier mot de passe');
         $('[id="deco"]').html('Deconnexion');
 
-        $('[id="navbarDropdown"]').removeClass("disabled");
+        $('[id="navbarDropdown"]').removeClass("disabled").addClass("active");
 };
+
+/***/ }),
+
+/***/ "./src/modules/router/route.class.js":
+/*!*******************************************!*\
+  !*** ./src/modules/router/route.class.js ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * @name Route
+ * @description Definition des routes de l'application
+ * @author Aelion
+ * @version 1.0.0
+ * @version 1.0.1
+ * Ajout de l'attribut canActivate qui permet de restreindre l'accès
+ */
+
+var Route = exports.Route = function () {
+    function Route(path, controller) {
+        var canActivate = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+
+        _classCallCheck(this, Route);
+
+        // Le =null rend l'attribut canActivate optionnel
+        this.path = path;
+        this.controller = controller;
+        this.canActivate = canActivate;
+    }
+
+    _createClass(Route, [{
+        key: "getPath",
+        value: function getPath() {
+            return this.path;
+        }
+    }, {
+        key: "getController",
+        value: function getController() {
+            return this.controller;
+        }
+    }, {
+        key: "getCanActivate",
+        value: function getCanActivate() {
+            return this.canActivate;
+        }
+    }]);
+
+    return Route;
+}();
+
+/***/ }),
+
+/***/ "./src/modules/router/router.class.js":
+/*!********************************************!*\
+  !*** ./src/modules/router/router.class.js ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.Router = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @name Router
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @description Collection des routes de l'application
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Aelion
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @version 1.0.0
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
+
+
+var _route = __webpack_require__(/*! ./route.class */ "./src/modules/router/route.class.js");
+
+var _loginController = __webpack_require__(/*! ../../user/login/loginController.class */ "./src/user/login/loginController.class.js");
+
+var _storiesController = __webpack_require__(/*! ../../stories/storiesController.class */ "./src/stories/storiesController.class.js");
+
+var _userservice = __webpack_require__(/*! ./../../services/userservice.class */ "./src/services/userservice.class.js");
+
+var _error = __webpack_require__(/*! ./../../errors/error.class */ "./src/errors/error.class.js");
+
+var _logoutController = __webpack_require__(/*! ./../../user/logout/logoutController.class */ "./src/user/logout/logoutController.class.js");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var controllers = { LoginController: _loginController.LoginController, StoriesController: _storiesController.StoriesController, ErrorController: _error.ErrorController, LogoutController: _logoutController.LogoutController //Constante (tableau) contenant nos classes controleur
+
+};
+var Router = exports.Router = function () {
+    function Router() {
+        _classCallCheck(this, Router);
+
+        this.routes = new Map();
+
+        var router = this;
+
+        // Definit le listener des routes : Ce sont des 'observers'
+        $(window).on('hashchange', function (event) {
+            router.getRoute();
+        });
+
+        $(window).on('load', function (event) {
+            router.getRoute();
+        });
+    }
+
+    _createClass(Router, [{
+        key: 'add',
+        value: function add(route) {
+            this.routes.set(route.path, route);
+            return this;
+        }
+    }, {
+        key: 'getRoute',
+        value: function getRoute() {
+            var url = location.hash.slice(1) || '/';
+            //slice enleve le # (premier caractère du hash qui est l'ensemble #/mystories), nos routes sont 
+            //apelées /qqchose et non #/qqchose, donc c'est pour pouvoir faire appel à nos routes sans probleme
+            console.log('URL à charger [' + url + ']');
+
+            //On va essayer de chercher si dans les routes on a quelque chose qui correspond
+            var route = this.routes.get(url);
+
+            //Instancie un controleur vide :
+            var controller = {};
+
+            if (!route) {
+                // Aucun controleur associé a cette route
+                controller = new _error.ErrorController();
+            } else {
+                if (url === '/') {
+                    // On vérifie l'utilisateur
+                    var userService = new _userservice.UserService();
+                    if (userService.hasUser()) {
+                        //Me dit si oui ou non j'ai deja un utilisateur en mémoire
+                        //Il y a un utilisateur identifié, donc pas de login
+                        controller = new _storiesController.StoriesController();
+                    } else {
+                        //Pas encore d'utilisateur connecté, on instancie un loginController
+                        controller = new _loginController.LoginController();
+                    }
+                } else {
+                    //La route definit autre chose
+                    console.log('Instancie :' + route.getController());
+
+                    var canActivate = route.getCanActivate();
+                    if (canActivate) {
+                        // L'instanciation requiert une vérification
+                        if (canActivate.hasUser()) {
+                            controller = new controllers[route.getController()](); // Va chercher dans notre tableau d'objet notre classe correspondante
+                        } else {
+                            // On ne peut pas, sans utilisateur identifié
+                            controller = new _loginController.LoginController();
+                        }
+                    } else {
+                        // Route activable sans contrôle
+                        controller = new controllers[route.getController()]();
+                    }
+                }
+            }
+            //A la fin, on charge la vue
+            controller.getView();
+        }
+    }]);
+
+    return Router;
+}();
 
 /***/ }),
 
@@ -215,20 +457,150 @@ var Toast = exports.Toast = function () {
             var toaster = $('<div>');
 
             // On lui ajoute les classes
-            toaster.addClass(this.backgroundClass).addClass('toast').html('<p>' + this.message + '</p>'); //Si je veux un bloc entier d ela taille de mon toaast css, je mets this.message (voir aussi sur custom.css)
+            toaster.addClass(this.backgroundClass).addClass('animated').addClass('zoomIn').addClass('toast').html('<p>' + this.message + '</p>'); //Si je veux un bloc entier d ela taille de mon toaast css, je mets this.message (voir aussi sur custom.css)
 
             // Ajoute le toaster au document lui-même
             toaster.appendTo($('body'));
 
-            //Affiche pendant un certain temps
+            //Affiche pendant un certain temps 
+
             setTimeout(function () {
-                //Ici, quand on arrive au bout de l'intervalle de temps
-                toaster.remove();
+                // Ici je fais joliment disparaitre mon toaster
+                toaster.removeClass('zoomIn').addClass('zoomOut');
+
+                setTimeout(function () {
+                    //Ici, quand on arrive au bout de l'intervalle de temps
+                    toaster.remove();
+                }, 1000);
             }, this.duration * 1000);
         }
     }]);
 
     return Toast;
+}();
+
+/***/ }),
+
+/***/ "./src/services/userservice.class.js":
+/*!*******************************************!*\
+  !*** ./src/services/userservice.class.js ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.UserService = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @name UserService
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @description Service de gestion de la persistance de l'utilisateur
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Aelion
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @version 1.0.0
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
+
+var _user = __webpack_require__(/*! ../user/user.class */ "./src/user/user.class.js");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var UserService = exports.UserService = function () {
+    function UserService() {
+        _classCallCheck(this, UserService);
+    }
+
+    // Lit localStorage pour récupérer un éventuel utilisateur
+
+
+    _createClass(UserService, [{
+        key: 'hasUser',
+        value: function hasUser() {
+            var user = JSON.parse(localStorage.getItem('storiesUser')); // methode parse : je prends une chaine, je la convertie en objet JSON
+
+            if (user) {
+                return true;
+            }
+            return false;
+        }
+    }, {
+        key: 'removeUser',
+        value: function removeUser() {
+            localStorage.removeItem('storiesUser');
+            this.user = {};
+        }
+
+        // Retourne un objet Utilisateur à partir du localStorage
+
+    }, {
+        key: 'getUser',
+        value: function getUser() {
+            var localUser = JSON.parse(localStorage.getItem('storiesUser'));
+            var user = new _user.User();
+            user.setUserName(localUser.userName);
+            user.group = localUser.group;
+
+            return user;
+        }
+    }]);
+
+    return UserService;
+}();
+
+/***/ }),
+
+/***/ "./src/stories/storiesController.class.js":
+/*!************************************************!*\
+  !*** ./src/stories/storiesController.class.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * @name StoriesController
+ * @description Controleur des stories
+ * @author Aelion
+ * @version 1.0.0
+ */
+
+var StoriesController = exports.StoriesController = function () {
+    function StoriesController() {
+        _classCallCheck(this, StoriesController);
+
+        // Definit la vue pour ce controleur
+        this.view = './src/stories/stories.view.html';
+    }
+
+    // Methode pour récupérer la vue à afficher
+
+
+    _createClass(StoriesController, [{
+        key: 'getView',
+        value: function getView() {
+            var app = $('[app]'); // Je decide d'injecter mon contenu dans div app dans mon fichier index (app est un nom qu'on a choisi)
+
+            $.get( //Ce qu'on veut récuperer de l'url et en cas de succes, ou je récupère(affiche) ce que j'ai récupéré ?
+            this.view, function (viewContent) {
+                app.empty(); //Vide le contenu le cas echeant
+                app.html(viewContent); //Je le rempi avec ma vue
+            });
+        }
+    }]);
+
+    return StoriesController;
 }();
 
 /***/ }),
@@ -268,10 +640,6 @@ var Login = exports.Login = function () {
         // Modifier le titre de la page
         $('#main-title').html('Identifiez-vous'); //html fait reference a h1 dans index
 
-        // Je defini mes attributs
-        this.login = $('[name="loginField"]');
-        this.password = $('[name="passwordField"]');
-
         //Definition du listener sur le formulaire
         this.formListener(); //this correspond a l'objet concerné de la classe Login
         this.submitListener();
@@ -287,13 +655,18 @@ var Login = exports.Login = function () {
     _createClass(Login, [{
         key: 'formListener',
         value: function formListener() {
-            var login = this.login;
-            var password = this.password;
+            //let login = this.login;
+            // let password = this.password;
 
-            $('#loginForm').on( //Je veux écouter tous les changements au lever d'une touche ('keyup') sur le formulaire Login
-            'keyup',
-            //Callback : Fonction appelée si l'évènement defini survient, ici, lors d'un changement, et le this n'est pas accepté dans un callback
+            var app = $('[app]');
+
+            app.on( //Je veux écouter tous les changements au lever d'une touche ('keyup') sur le formulaire Login
+            'keyup', '#loginForm', // Délégation d'évènement
+            //Callback : Fonction appelée si l'évènement defini survient, ici, lors d'une remontée de touche
             function (event) {
+                // Je defini mes attributs
+                var login = $('[name="loginField"]');
+                var password = $('[name="passwordField"]');
 
                 //Est ce que les deux champs sont remplis et le login a plus ou 5 caractères
                 if (login.val().length >= 5 && password.val() !== '') {
@@ -307,10 +680,16 @@ var Login = exports.Login = function () {
     }, {
         key: 'submitListener',
         value: function submitListener() {
-            var login = this.login;
-            var password = this.password;
+            // let login = this.login;
+            // let password = this.password;
 
-            $('#loginForm').on('submit', function (event) {
+            var app = $('[app]');
+
+            app.on('submit', '#loginForm', function (event) {
+                // Je defini mes attributs
+                var login = $('[name="loginField"]');
+                var password = $('[name="passwordField"]');
+
                 event.preventDefault(); //Empeche l'action par defaut (ici l'envoie du formulaire)
                 var user = new _user.User();
                 user.setUserName(login.val());
@@ -319,7 +698,12 @@ var Login = exports.Login = function () {
                 // Gere l'authentification
                 if (user.authentification()) {
                     console.log('Ok, ça roule');
+
+                    //Instancie le menu
                     var menu = new _menu.Menu(user);
+
+                    //On va essayer d'aller vers une autre page
+                    document.location.replace('#/mystories');
                 } else {
                     console.log('Nop, t\'as pas l\'droit !');
                     login.val('');
@@ -339,6 +723,125 @@ var Login = exports.Login = function () {
     }]);
 
     return Login;
+}();
+
+/***/ }),
+
+/***/ "./src/user/login/loginController.class.js":
+/*!*************************************************!*\
+  !*** ./src/user/login/loginController.class.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.LoginController = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @name LoginController
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @description Controleur pour la gestion du formulaire de login
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Aelion
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @version 1.0.0
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
+
+
+var _login = __webpack_require__(/*! ./../login.class */ "./src/user/login.class.js");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var LoginController = exports.LoginController = function () {
+    function LoginController() {
+        _classCallCheck(this, LoginController);
+
+        // Definit la vue pour ce controleur
+        this.view = './src/user/login/views/loginform.view.html';
+
+        // Instancier la classe Login pour la premiere gestion du formulaire
+        this.login = new _login.Login();
+    }
+
+    // Methode pour récupérer la vue à afficher
+
+
+    _createClass(LoginController, [{
+        key: 'getView',
+        value: function getView() {
+            var app = $('[app]'); // Je decide d'injecter mon contenu dans div app dans mon fichier index (app est un nom qu'on a choisi)
+
+            $.get( //Ce qu'on veut récuperer de l'url et en cas de succes, ou je récupère(affiche) ce que j'ai récupéré ?
+            this.view, function (viewContent) {
+                app.empty(); //Vide le contenu le cas echeant
+                app.html(viewContent); //Je le rempi avec ma vue
+            });
+        }
+    }]);
+
+    return LoginController;
+}();
+
+/***/ }),
+
+/***/ "./src/user/logout/logoutController.class.js":
+/*!***************************************************!*\
+  !*** ./src/user/logout/logoutController.class.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.LogoutController = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @name LogoutController
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @description Controleur pour la gestion du formulaire de login
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Aelion
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @version 1.0.0
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
+
+
+var _loginController = __webpack_require__(/*! ./../login/loginController.class */ "./src/user/login/loginController.class.js");
+
+var _userservice = __webpack_require__(/*! ./../../services/userservice.class */ "./src/services/userservice.class.js");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var LogoutController = exports.LogoutController = function () {
+    function LogoutController() {
+        _classCallCheck(this, LogoutController);
+
+        // Utilise le service pour supprimer la clé
+        var userService = new _userservice.UserService();
+        userService.removeUser();
+
+        //Desactive le menu
+        $('[id="navbarDropdown"]').html('Utilisateur');
+        $('[id="navbarDropdown"]').addClass("disabled").removeClass("active");
+
+        // Instancier la classe Login pour la premiere gestion du formulaire
+        this.login = new _loginController.LoginController();
+    }
+
+    // Methode pour récupérer la vue à afficher
+
+
+    _createClass(LogoutController, [{
+        key: 'getView',
+        value: function getView() {
+            return this.login.getView();
+        }
+    }]);
+
+    return LogoutController;
 }();
 
 /***/ }),
@@ -403,6 +906,14 @@ var User = exports.User = function () {
         value: function authentification() {
             if (this.userName === 'sbernadou' && this.password === 'sbe') {
                 this.group = 'Administrateur';
+
+                //Ajout de l'utilisateur dans localStorage
+                var persistantUser = {
+                    userName: this.userName,
+                    group: this.group
+                };
+                localStorage.setItem('storiesUser', JSON.stringify(persistantUser)); //stringify permet d'enregistrer en chaine de caractère un objet json
+
                 return true;
             }
             return false;
