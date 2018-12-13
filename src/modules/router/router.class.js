@@ -9,6 +9,7 @@ import { Route } from './route.class';
 import { LoginController } from '../../user/login/loginController.class';
 import { StoriesController } from '../../stories/storiesController.class';
 import { UserService } from './../../services/userservice.class';
+import { ErrorController } from './../../errors/error.class';
 
 const controllers = { LoginController, StoriesController } //Constante (tableau) contenant nos classes controleur
 
@@ -53,6 +54,7 @@ export class Router {
 
         if (!route) {
             // Aucun controleur associé a cette route
+            controller = new ErrorController();
         } else {
             if (url === '/') {
                 // On vérifie l'utilisateur
@@ -82,9 +84,9 @@ export class Router {
                     controller = new controllers[route.getController()]();
                 }
             }
-            //A la fin, on charge la vue
-            controller.getView();
-        }
 
+        }
+        //A la fin, on charge la vue
+        controller.getView();
     }
 }

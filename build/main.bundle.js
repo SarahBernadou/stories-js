@@ -102,14 +102,70 @@ var _route = __webpack_require__(/*! ../../src/modules/router/route.class */ "./
 
 var _userservice = __webpack_require__(/*! ../../src/services/userservice.class */ "./src/services/userservice.class.js");
 
-//Instancue les routes de l'application
-var router = new _router.Router(); /**
-                                    * @name main.js
-                                    * @description Point d'entrée principal dans l'application Javascript
-                                    */
+var _error = __webpack_require__(/*! ../../src/errors/error.class */ "./src/errors/error.class.js");
 
+//Instancie les routes de l'application
+/**
+ * @name main.js
+ * @description Point d'entrée principal dans l'application Javascript
+ */
+var router = new _router.Router();
 var userService = new _userservice.UserService();
 router.add(new _route.Route('/', 'LoginController', userService)).add(new _route.Route('/mystories', 'StoriesController', userService));
+
+/***/ }),
+
+/***/ "./src/errors/error.class.js":
+/*!***********************************!*\
+  !*** ./src/errors/error.class.js ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * @name ErrorController
+ * @description Controleur des erreur
+ * @author Aelion
+ * @version 1.0.0
+ */
+
+var ErrorController = exports.ErrorController = function () {
+    function ErrorController() {
+        _classCallCheck(this, ErrorController);
+
+        // Definit la vue pour ce controleur
+        this.view = './src/errors/views/noRoute.view.html';
+    }
+
+    // Methode pour récupérer la vue à afficher
+
+
+    _createClass(ErrorController, [{
+        key: 'getView',
+        value: function getView() {
+            var app = $('[app]'); // Je decide d'injecter mon contenu dans div app dans mon fichier index (app est un nom qu'on a choisi)
+
+            $.get( //Ce qu'on veut récuperer de l'url et en cas de succes, ou je récupère(affiche) ce que j'ai récupéré ?
+            this.view, function (viewContent) {
+                app.empty(); //Vide le contenu le cas echeant
+                app.html(viewContent); //Je le rempi avec ma vue
+            });
+        }
+    }]);
+
+    return ErrorController;
+}();
 
 /***/ }),
 
@@ -245,6 +301,8 @@ var _storiesController = __webpack_require__(/*! ../../stories/storiesController
 
 var _userservice = __webpack_require__(/*! ./../../services/userservice.class */ "./src/services/userservice.class.js");
 
+var _error = __webpack_require__(/*! ./../../errors/error.class */ "./src/errors/error.class.js");
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var controllers = { LoginController: _loginController.LoginController, StoriesController: _storiesController.StoriesController //Constante (tableau) contenant nos classes controleur
@@ -290,6 +348,7 @@ var Router = exports.Router = function () {
 
             if (!route) {
                 // Aucun controleur associé a cette route
+                controller = new _error.ErrorController();
             } else {
                 if (url === '/') {
                     // On vérifie l'utilisateur
@@ -320,9 +379,9 @@ var Router = exports.Router = function () {
                         controller = new controllers[route.getController()]();
                     }
                 }
-                //A la fin, on charge la vue
-                controller.getView();
             }
+            //A la fin, on charge la vue
+            controller.getView();
         }
     }]);
 
