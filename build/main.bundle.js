@@ -102,7 +102,7 @@ var _loginController = __webpack_require__(/*! ../../src/user/login/loginControl
 
 var _storiesController = __webpack_require__(/*! ../../src/stories/storiesController.class */ "./src/stories/storiesController.class.js");
 
-var _userService = __webpack_require__(/*! ../../src/services/user-service.class */ "./src/services/user-service.class.js");
+var _userService = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module '../../src/services/user-service.class'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 
 /**
  * @name main.js
@@ -290,56 +290,6 @@ var Toast = exports.Toast = function () {
     }]);
 
     return Toast;
-}();
-
-/***/ }),
-
-/***/ "./src/services/user-service.class.js":
-/*!********************************************!*\
-  !*** ./src/services/user-service.class.js ***!
-  \********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-/**
- * @name UserService
- * @description Service de gestion de la persistance de l'utilisateur
- * @author Aelion
- * @version 1.0.0
- */
-
-var UserService = exports.UserService = function () {
-    function UserService() {
-        _classCallCheck(this, UserService);
-    }
-
-    // Lit localStorage pour récupérer un éventuel utilisateur
-
-
-    _createClass(UserService, [{
-        key: 'hasUser',
-        value: function hasUser() {
-            var user = JSON.parse(localStorage.getItem('storiesUser')); // methode parse : je prends une chaine, je la convertie en objet JSON
-
-            if (user) {
-                return true;
-            }
-            return false;
-        }
-    }]);
-
-    return UserService;
 }();
 
 /***/ }),
