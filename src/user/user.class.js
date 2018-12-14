@@ -40,11 +40,13 @@ export class User {
                 success: function (datas) {         // retourne response de notre user nodetodo-users
                    const srvUser = datas[0];
                     if (srvUser) {
+                        user.id = srvUser.id;
                         user.userName = srvUser.nom;
                         user.forname = srvUser.prenom;
                         user.group = srvUser.metier;
 
                         const persistentUser = {
+                            id: user.id,
                             Username: user.userName,
                             group: user.group
                         };
