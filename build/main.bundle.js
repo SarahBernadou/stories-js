@@ -546,7 +546,7 @@ var UserService = exports.UserService = function () {
             var localUser = JSON.parse(localStorage.getItem('storiesUser'));
             var user = new _user.User();
             user.id = localUser.id;
-            user.setUserName(localUser.Username);
+            user.setUserName(localUser.userName);
             user.group = localUser.group;
             console.log('UserService::getUser');
             return user;
@@ -1231,7 +1231,7 @@ var User = exports.User = function () {
 
                             var persistentUser = {
                                 id: user.id,
-                                Username: user.userName,
+                                userName: user.userName,
                                 group: user.group
                             };
 

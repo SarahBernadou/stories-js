@@ -37,7 +37,7 @@ export class UserService {
         const localUser = JSON.parse(localStorage.getItem('storiesUser'));
         const user = new User();
         user.id = localUser.id;
-        user.setUserName(localUser.Username);
+        user.setUserName(localUser.userName);
         user.group = localUser.group;
         console.log('UserService::getUser');
         return user;

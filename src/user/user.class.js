@@ -47,7 +47,7 @@ export class User {
 
                         const persistentUser = {
                             id: user.id,
-                            Username: user.userName,
+                            userName: user.userName,
                             group: user.group
                         };
 
