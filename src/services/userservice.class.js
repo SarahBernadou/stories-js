@@ -8,13 +8,19 @@
 import { User } from "../user/user.class";
 
 export class UserService {
-    constructor() { }
+    constructor() { 
+        this.user = {};
+    }
 
     // Lit localStorage pour récupérer un éventuel utilisateur
     hasUser() {
         const user = JSON.parse(localStorage.getItem('storiesUser')); // methode parse : je prends une chaine, je la convertie en objet JSON
 
         if (user) {
+            this.user = new User();
+            this.user.setUserName(user.userName);
+            this.user.group = user.group;
+
             return true
         }
         return false;
@@ -30,9 +36,15 @@ export class UserService {
     getUser() {
         const localUser = JSON.parse(localStorage.getItem('storiesUser'));
         const user = new User();
+        user.id = localUser.id;
         user.setUserName(localUser.userName);
         user.group = localUser.group;
-
+        console.log('UserService::getUser');
         return user;
+    }
+
+    getAuthentificateUser() {
+        this.hasUser();
+        return this.user;
     }
 }

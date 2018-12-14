@@ -510,6 +510,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var UserService = exports.UserService = function () {
     function UserService() {
         _classCallCheck(this, UserService);
+
+        this.user = {};
     }
 
     // Lit localStorage pour récupérer un éventuel utilisateur
@@ -521,6 +523,10 @@ var UserService = exports.UserService = function () {
             var user = JSON.parse(localStorage.getItem('storiesUser')); // methode parse : je prends une chaine, je la convertie en objet JSON
 
             if (user) {
+                this.user = new _user.User();
+                this.user.setUserName(user.userName);
+                this.user.group = user.group;
+
                 return true;
             }
             return false;
@@ -539,10 +545,17 @@ var UserService = exports.UserService = function () {
         value: function getUser() {
             var localUser = JSON.parse(localStorage.getItem('storiesUser'));
             var user = new _user.User();
+            user.id = localUser.id;
             user.setUserName(localUser.userName);
             user.group = localUser.group;
-
+            console.log('UserService::getUser');
             return user;
+        }
+    }, {
+        key: 'getAuthentificateUser',
+        value: function getAuthentificateUser() {
+            this.hasUser();
+            return this.user;
         }
     }]);
 
@@ -564,43 +577,330 @@ var UserService = exports.UserService = function () {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.StoriesController = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @name StoriesController
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @description Controleur des stories
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Aelion
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @version 1.0.0
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
+
+var _userservice = __webpack_require__(/*! ./../services/userservice.class */ "./src/services/userservice.class.js");
+
+var _storyservice = __webpack_require__(/*! ./storyservice.class */ "./src/stories/storyservice.class.js");
+
+var _story = __webpack_require__(/*! ./story.class */ "./src/stories/story.class.js");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var StoriesController = exports.StoriesController = function () {
+    function StoriesController() {
+        var _this = this;
+
+        _classCallCheck(this, StoriesController);
+
+        // Définit la vue pour ce contrôleur
+        this.view = './src/stories/stories.view.html';
+
+        var userService = new _userservice.UserService();
+
+        this.stories = [];
+
+        // Affichage du loader
+        var loader = $('[app]').children('#loader').eq(0);
+        loader.removeClass('hidden');
+
+        var service = new _storyservice.StoriesService();
+
+        service.getMyStories().then(function (stories) {
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+
+            try {
+                for (var _iterator = stories[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var story = _step.value;
+
+                    var aStory = new _story.Story();
+                    aStory.deserialize(story);
+                    _this.stories.push(aStory);
+                }
+                // En fin de parcours, on crée les lignes du tableau
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
+                    }
+                } finally {
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
+            }
+
+            _this._createTable();
+
+            // Efface le loader
+            loader.addClass('hidden');
+        });
+    }
+
+    /**
+     * Méthode pour récupérer la vue à afficher
+     */
+
+
+    _createClass(StoriesController, [{
+        key: 'getView',
+        value: function getView() {
+            // Récupère le placeholder de mon application
+            var app = $('[app]');
+
+            $.get(this.view,
+            // Callback appelée après que le fichier ait été chargé
+            function (viewContent) {
+                app.empty(); // Vide le contenu le cas échéant
+                app.html(viewContent);
+            });
+        }
+    }, {
+        key: '_createTable',
+        value: function _createTable() {
+            var tbody = $('[app]').children('#stories-table').eq(0).children('tbody').eq(0);
+
+            var _iteratorNormalCompletion2 = true;
+            var _didIteratorError2 = false;
+            var _iteratorError2 = undefined;
+
+            try {
+                for (var _iterator2 = this.stories[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                    var story = _step2.value;
+
+
+                    // Créer une ligne
+                    var _row = $('<tr>');
+                    _row.attr('data-id', story.id);
+
+                    // Colonne 1 : id
+                    var _td = $('<td>');
+                    _td.html(story.id);
+                    _td.appendTo(_row);
+
+                    // Colonne 2 : Titre
+                    _td = $('<td>');
+                    _td.html(story.titre);
+                    _td.appendTo(_row);
+
+                    // Colonne 3 : Date de début
+                    _td = $('<td>');
+                    _td.html(story.getBeginDate());
+                    _td.appendTo(_row);
+
+                    // Colonne 4 : Date de fin estimée
+                    _td = $('<td>');
+                    _td.html(story.getEstimatedEndDate());
+                    _td.appendTo(_row);
+
+                    _td = $('<td>');
+                    _td.html(story.libelle);
+                    _td.appendTo(_row);
+
+                    // Dernière colonne à traiter
+                    _td = $('<td>');
+                    var _btn = $('<i>');
+                    _btn.addClass('icon-switch').addClass('done');
+                    _btn.appendTo(_td);
+                    _btn = $('<i>');
+                    _btn.addClass('icon-bin2').addClass('delete');
+                    _btn.appendTo(_td);
+                    _td.appendTo(_row);
+
+                    // Ajoute le tout au tbody
+                    _row.appendTo(tbody);
+                }
+            } catch (err) {
+                _didIteratorError2 = true;
+                _iteratorError2 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                        _iterator2.return();
+                    }
+                } finally {
+                    if (_didIteratorError2) {
+                        throw _iteratorError2;
+                    }
+                }
+            }
+        }
+    }]);
+
+    return StoriesController;
+}();
+
+/***/ }),
+
+/***/ "./src/stories/story.class.js":
+/*!************************************!*\
+  !*** ./src/stories/story.class.js ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /**
- * @name StoriesController
- * @description Controleur des stories
- * @author Aelion
+ * @name Story
+ * @desc Modèle pour la gestion des stories
+ * @author Aélion
  * @version 1.0.0
  */
+var Story = exports.Story = function () {
+    function Story() {
+        _classCallCheck(this, Story);
 
-var StoriesController = exports.StoriesController = function () {
-    function StoriesController() {
-        _classCallCheck(this, StoriesController);
-
-        // Definit la vue pour ce controleur
-        this.view = './src/stories/stories.view.html';
+        this.id = 0;
+        this.titre = '';
+        this.debut = new Date();
+        this.fin = new Date();
+        this.val = '';
+        this.team_members_id = 0;
+        //this.business_values_id = 0;
     }
 
-    // Methode pour récupérer la vue à afficher
+    _createClass(Story, [{
+        key: 'getBeginDate',
+        value: function getBeginDate() {
+            return this.debut.getDate() + '-' + this.debut.getMonth() + '-' + this.debut.getFullYear();
+        }
+    }, {
+        key: 'getEstimatedEndDate',
+        value: function getEstimatedEndDate() {
+            return this.fin.getDate() + '-' + this.fin.getMonth() + '-' + this.fin.getFullYear();
+        }
+    }, {
+        key: 'deserialize',
+        value: function deserialize(datas) {
+            this.id = datas.Num;
+            this.titre = datas.Titre;
+            this.debut = new Date(datas.Debut);
+            this.fin = new Date(datas.Fin);
+            this.val = datas.Valeur;
+            this.team_members_id = datas.Utilisateur;
+            //this.business_values_id = datas.business_values_id;
+
+            this.libelle = datas.libelle;
+            if (datas.hasOwnProperty('prenom')) {
+                this.forname = datas.forname;
+            }
+            if (datas.hasOwnProperty('nom')) {
+                this.lastname = datas.lastname;
+            }
+        }
+    }]);
+
+    return Story;
+}();
+
+/***/ }),
+
+/***/ "./src/stories/storyservice.class.js":
+/*!*******************************************!*\
+  !*** ./src/stories/storyservice.class.js ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 
 
-    _createClass(StoriesController, [{
-        key: 'getView',
-        value: function getView() {
-            var app = $('[app]'); // Je decide d'injecter mon contenu dans div app dans mon fichier index (app est un nom qu'on a choisi)
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.StoriesService = undefined;
 
-            $.get( //Ce qu'on veut récuperer de l'url et en cas de succes, ou je récupère(affiche) ce que j'ai récupéré ?
-            this.view, function (viewContent) {
-                app.empty(); //Vide le contenu le cas echeant
-                app.html(viewContent); //Je le rempi avec ma vue
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @name StoriesService
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @desc Service de mapping des stories
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Aélion
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @version 1.0.0
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
+
+
+var _userservice = __webpack_require__(/*! ./../services/userservice.class */ "./src/services/userservice.class.js");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var StoriesService = exports.StoriesService = function () {
+    function StoriesService() {
+        _classCallCheck(this, StoriesService);
+
+        this.uri = 'http://localhost:3000/stories';
+    }
+
+    /**
+     * Retourne une promesse de stories d'un utilisateur identifié
+     * @return Promise<any>
+     */
+
+
+    _createClass(StoriesService, [{
+        key: 'getMyStories',
+        value: function getMyStories() {
+            var _this = this;
+
+            var userService = new _userservice.UserService();
+            var user = userService.getUser();
+            console.log(JSON.stringify(user));
+            return new Promise(function (resolve) {
+                $.ajax({
+                    url: _this.uri + '/' + user.userName,
+                    method: 'get',
+                    dataType: 'json',
+                    success: function success(datas) {
+                        resolve(datas);
+                    },
+                    error: function error(xhr, _error) {
+                        resolve(false);
+                    }
+                });
+            });
+        }
+    }, {
+        key: 'getAllStories',
+        value: function getAllStories() {
+            var _this2 = this;
+
+            return new Promise(function (resolve) {
+                $.ajax({
+                    url: _this2.uri,
+                    method: 'get',
+                    dataType: 'json',
+                    success: function success(datas) {
+                        resolve(datas);
+                    },
+                    error: function error(xhr, _error2) {
+                        resolve(false);
+                    }
+                });
             });
         }
     }]);
 
-    return StoriesController;
+    return StoriesService;
 }();
 
 /***/ }),
@@ -695,29 +995,32 @@ var Login = exports.Login = function () {
                 user.setUserName(login.val());
                 user.setPassword(password.val());
 
-                // Gere l'authentification
-                if (user.authentification()) {
-                    console.log('Ok, ça roule');
+                user.authentification().then(function (aUser) {
+                    // Je demande a la methode authentification de me retourner sa promesse une fois résolue
+                    // Gere l'authentification
+                    if (aUser) {
+                        console.log('Ok, ça roule');
 
-                    //Instancie le menu
-                    var menu = new _menu.Menu(user);
+                        //Instancie le menu
+                        var menu = new _menu.Menu(user);
 
-                    //On va essayer d'aller vers une autre page
-                    document.location.replace('#/mystories');
-                } else {
-                    console.log('Nop, t\'as pas l\'droit !');
-                    login.val('');
-                    password.val('');
+                        //On va essayer d'aller vers une autre page
+                        document.location.replace('#/mystories');
+                    } else {
+                        console.log('Nop, t\'as pas l\'droit !');
+                        login.val('');
+                        password.val('');
 
-                    $('#btnLogin').attr('disabled', 'disabled');
+                        $('#btnLogin').attr('disabled', 'disabled');
 
-                    // On peut instancier un toast, c'est un objet JSON
-                    var toast = new _toast.Toast({
-                        'message': 'Login et/ou mot de passe éronné(s) pour cet utilisateur',
-                        'duration': 2
-                    });
-                    toast.toastIt();
-                }
+                        // On peut instancier un toast, c'est un objet JSON
+                        var toast = new _toast.Toast({
+                            'message': 'Login et/ou mot de passe éronné(s) pour cet utilisateur',
+                            'duration': 2
+                        });
+                        toast.toastIt();
+                    }
+                });
             });
         }
     }]);
@@ -904,19 +1207,50 @@ var User = exports.User = function () {
     }, {
         key: 'authentification',
         value: function authentification() {
-            if (this.userName === 'sbernadou' && this.password === 'sbe') {
-                this.group = 'Administrateur';
+            var _this = this;
 
-                //Ajout de l'utilisateur dans localStorage
-                var persistantUser = {
-                    userName: this.userName,
-                    group: this.group
-                };
-                localStorage.setItem('storiesUser', JSON.stringify(persistantUser)); //stringify permet d'enregistrer en chaine de caractère un objet json
+            // Appel vers le serveur :
+            //GET http://localhost/3000/users/:login/:password
 
-                return true;
-            }
-            return false;
+            var user = this;
+
+            return new Promise(function (resolve) {
+
+                $.ajax({ //methode Jquery pour appel asynchrone a un serveur,  
+                    url: 'http://localhost:3000/users/' + _this.userName + '/' + _this.password,
+                    method: 'get',
+                    responseType: 'json',
+                    success: function success(datas) {
+                        // retourne response de notre user nodetodo-users
+                        var srvUser = datas[0];
+                        if (srvUser) {
+                            user.id = srvUser.id;
+                            user.userName = srvUser.nom;
+                            user.forname = srvUser.prenom;
+                            user.group = srvUser.metier;
+
+                            var persistentUser = {
+                                id: user.id,
+                                userName: user.userName,
+                                group: user.group
+                            };
+
+                            // On ajoute l'utilisateur au localStorage
+                            localStorage.setItem('storiesUser', JSON.stringify(persistentUser));
+
+                            // C'est bon, j'ai bien un utilisateur
+                            resolve(true);
+                        } else {
+                            resolve(false);
+                        }
+                    },
+                    error: function error(xhr, _error) {
+                        //J'ai personne
+                        resolve(false);
+                    }
+
+                });
+            });
         }
     }, {
         key: 'getUserName',
